@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import sudoku.Data;
 import sudoku.Grid;
 import sudoku.Position;
+import sudoku.UnsolvableException;
 import utils.MyPreferences;
 
 /**
@@ -33,7 +34,7 @@ public class Board implements GridElement{
             House house = new House(cells);
             house.setDrawBackground(false);
             house.init(d);
-            houses.add(new House(cells));
+            houses.add(house);
         }
         for(int x=start_pos.getX(); x<=end_pos.getX(); x++){
             ArrayList<Position> cells = new ArrayList<Position>();
@@ -83,7 +84,28 @@ public class Board implements GridElement{
         g.drawLine(x_end-1, y_start, x_end-1, y_end);
         g.drawLine(x_end+2, y_start-2, x_end+2, y_end+2);
     }
+    @Override
     public int validate(){
-        return VALID;
+        int result = FINISHED;
+        for(int i=0; i<houses.size(); i++){
+            House h = houses.get(i);
+            int valid = h.validate();
+            if(valid < result) result = valid;
+        }
+        return result;
+    }
+    @Override
+    public int updatePencilmarks() throws UnsolvableException{
+        int result = 0;
+        for(int i=0; i<houses.size(); i++){
+            House h = houses.get(i);
+            result += h.updatePencilmarks();
+        }
+        return result;
+    }
+    
+    @Override
+    public Board clone(){
+        return new Board(start_pos.clone(), end_pos.clone());
     }
 }

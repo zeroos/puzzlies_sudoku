@@ -3,6 +3,9 @@ package sudoku;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
 import sudoku.gridElements.GridElement;
 import sudoku.gridElements.House;
 
@@ -10,12 +13,14 @@ import sudoku.gridElements.House;
  *
  * @author zeroos
  */
-public class Data {
+public class Data implements Cloneable{
     protected int width;
     protected int height;
     protected Cell[][] grid;
     protected int maxValue = 0;
     protected ArrayList<GridElement> elements = new ArrayList<GridElement>();
+    
+    EventListenerList changeListenerList = new EventListenerList();
 
     public Data(int width, int height) {
         this.width = width;
@@ -27,19 +32,27 @@ public class Data {
         return grid;
     }
     public Cell getCell(Position pos){
-        return getCell(pos, true);
+        return getCell(pos, false);
     }
     public Cell getCell(Position pos, boolean force){
-        return getCell(pos.getX(), pos.getY());
+        return getCell(pos.getX(), pos.getY(), force);
     }
     public Cell getCell(int x, int y){
-        return getCell(x, y, true);
+        return getCell(x, y, false);
     }
     public Cell getCell(int x, int y, boolean force){
         Cell c = grid[x][y];
         if(c == null && force){
             c = new Cell();
             grid[x][y] = c;
+            c.addChangeListener(new ChangeListener(){
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    validate();
+                    fireChangeEvent();
+                }
+                
+            });
         }
         return c;
     }
@@ -71,6 +84,32 @@ public class Data {
             }
         }
     }
+    public int updatePencilmarks() throws UnsolvableException{
+        addAllPencilmarks();
+        int result = 0;
+        for(int i=0; i<elements.size(); i++){
+            GridElement e = elements.get(i);
+            result += e.updatePencilmarks();
+        }
+        return result;
+    }
+    public int validate(){
+        for(int y=0; y<getHeight(); y++){
+            for(int x=0; x<getWidth(); x++){
+                Cell c = getCell(x, y, false);
+                if(c != null) c.setState(Cell.UNKNOWN);
+            }
+        }
+        
+        
+        int result = GridElement.FINISHED;
+        for(int i=0; i<elements.size(); i++){
+            GridElement e = elements.get(i);
+            int valid = e.validate();
+            if(valid < result) result = valid;
+        }
+        return result;
+    }
     
     public ArrayList<GridElement> getElements(){
         return elements;
@@ -93,6 +132,15 @@ public class Data {
                 dataPos++;
             }
         }
+    }
+    public String getGridValues(){        
+        String data = "";
+        for(int y=0; y<getHeight(); y++){
+            for(int x=0; x<getWidth(); x++){
+                data += String.valueOf(getCell(x,y).getValue());
+            }
+        }
+        return data;
     }
     public void addBlockset(String data){
         if(data.length() != getWidth() * getHeight()){
@@ -127,6 +175,64 @@ public class Data {
                 getCell(x,y).addPencilmarks(pencilmarks[dataPos++]);
                 if(dataPos >= pencilmarks.length) return;
             }
+        }
+    }
+
+    void addAllPencilmarks() {
+        for(int y=0; y<getHeight(); y++){
+            for(int x=0; x<getWidth(); x++){
+                for(int i=1; i<=9; i++){
+                    getCell(x,y).addPencilmark(i);
+                }
+            }
+        }
+        fireChangeEvent();
+    }
+
+    void delAllPencilmarks() {
+        for(int y=0; y<getHeight(); y++){
+            for(int x=0; x<getWidth(); x++){
+                for(int i=1; i<=9; i++){
+                    getCell(x,y).delPencilmark(i);
+                }
+            }
+        }
+        fireChangeEvent();
+    }
+    
+    
+    @Override
+    public Data clone(){
+        Data newD = new Data(getWidth(), getHeight());
+        for(int i=0; i<elements.size(); i++){
+            newD.addElement(elements.get(i).clone());
+        }
+        newD.init();
+        for(int y=0; y<getHeight(); y++){
+            for(int x=0; x<getWidth(); x++){
+                int cellValue = getCell(x,y).getValue();
+                if(cellValue != 0){
+                    newD.getCell(x,y).setValue(cellValue);
+                }
+            }
+        }
+        return newD;
+    }
+    
+    
+    public void addChangeListener(ChangeListener l) {
+        changeListenerList.add(ChangeListener.class, l);
+    }
+
+    public void removeChangeListener(ChangeListener l) {
+        changeListenerList.remove(ChangeListener.class, l);
+    }
+
+    public void fireChangeEvent() {
+        ChangeListener listeners[] =
+                changeListenerList.getListeners(ChangeListener.class);
+        for (ChangeListener l : listeners) {
+            l.stateChanged(new ChangeEvent(this));
         }
     }
 }

@@ -12,11 +12,14 @@ package sudoku;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import utils.Zoomer;
 import utils.ColorChooser;
+import utils.MyButton;
 import utils.buttons.AddPencilmarksButton;
 import utils.buttons.PauseButton;
 import utils.buttons.RedoButton;
@@ -32,6 +35,9 @@ public class Panel extends javax.swing.JPanel {
     Controller controller;
     /** Creates new form Panel */
     public Panel(final Controller controller) {
+        this(controller, new MyButton[]{});
+    }
+    public Panel(final Controller controller, MyButton[] buttons) {
         this.controller = controller;
         initComponents();
         jScrollPane1.setViewportView(controller.getGridPanel());
@@ -50,7 +56,8 @@ public class Panel extends javax.swing.JPanel {
         addPencilmarksButton.addActionListener(new AbstractAction(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                if(addPencilmarksButton.isAdd()) controller.getData().addAllPencilmarks();
+                else controller.getData().delAllPencilmarks();
             }
             
         });
@@ -97,6 +104,11 @@ public class Panel extends javax.swing.JPanel {
         bottomButtons.add(redoButton);
         bottomButtons.add(pauseButton);
         bottomButtons.add(addPencilmarksButton);
+        
+        for(int i=0; i<buttons.length; i++){
+            System.out.println("ADD" + buttons[i]);
+            topPanel.add(buttons[i]);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -108,12 +120,19 @@ public class Panel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        topPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         zoomerPanel = new javax.swing.JPanel();
         bottomButtons = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
+
+        topPanel.setBackground(new java.awt.Color(255, 255, 255));
+        topPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        topPanel.setPreferredSize(new java.awt.Dimension(20, 25));
+        topPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 2, 2));
+        add(topPanel, java.awt.BorderLayout.PAGE_START);
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -133,10 +152,12 @@ public class Panel extends javax.swing.JPanel {
 
         add(jPanel2, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomButtons;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel topPanel;
     private javax.swing.JPanel zoomerPanel;
     // End of variables declaration//GEN-END:variables
 }

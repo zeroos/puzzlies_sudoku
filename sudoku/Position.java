@@ -4,7 +4,7 @@ package sudoku;
  *
  * @author zeroos
  */
-public class Position {
+public class Position implements Cloneable{
     protected int x;
     protected int y;
 
@@ -61,5 +61,13 @@ public class Position {
         return hash;
     }
     
+    @Override
+    public Position clone(){
+        return new Position(x, y);
+    }
+    
+    public String toString(){
+        return "(" + x + ";" + y + ")";
+    }
 
 }

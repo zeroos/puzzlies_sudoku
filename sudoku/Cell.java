@@ -3,10 +3,10 @@ package sudoku;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import utils.MyPreferences;
 
@@ -20,7 +20,7 @@ public class Cell extends JPanel{
     public static final int UNKNOWN = 0;
     public static final int INCORRECT = 1;
     
-    EventListenerList actionListenerList = new EventListenerList();
+    EventListenerList changeListenerList = new EventListenerList();
     
     int type = NORMAL;
     int state = UNKNOWN;
@@ -55,6 +55,9 @@ public class Cell extends JPanel{
             int val = Integer.parseInt(String.valueOf(data.charAt(i)), Character.MAX_RADIX);
             addPencilmark(new Pencilmark(val));
         }
+    }
+    public HashMap<Integer, Pencilmark> getPencilmarks(){
+        return pencilmarks;
     }
     
     public Color getColoring() {
@@ -107,6 +110,7 @@ public class Cell extends JPanel{
         return type;
     }
     public void setState(int state){
+        if(state == this.state) return;
         this.state = state;
     }
     public int getState(){
@@ -118,7 +122,7 @@ public class Cell extends JPanel{
         if(v>getMaxValue()) System.err.println("WARNING: value greater than maxValue for this cell.");
         if(getType() == GIVEN && value != 0) return;
         value = v;
-        fireActionEvent();
+        fireChangeEvent();
     }
     public int getValue(){
         return value;
@@ -172,7 +176,7 @@ public class Cell extends JPanel{
             int prevStrWidth = 1;
             do{
                 fontSize--;
-                font = new Font(Font.SANS_SERIF, (type==GIVEN||state==INCORRECT)?Font.BOLD:Font.PLAIN, fontSize);
+                font = new Font(Font.SANS_SERIF, (type==GIVEN)?Font.BOLD:Font.PLAIN, fontSize);
                 g.setFont(font);
                 if(strWidth==prevStrWidth) break;
                 prevStrWidth = strWidth;
@@ -203,22 +207,22 @@ public class Cell extends JPanel{
         }
     }
     
-    public void addActionListener(ActionListener l) {
-        actionListenerList.add(ActionListener.class, l);
+    public void addChangeListener(ChangeListener l) {
+        changeListenerList.add(ChangeListener.class, l);
     }
 
-    public void removeActionListener(ActionListener l) {
-        actionListenerList.remove(ActionListener.class, l);
+    public void removeChangeListener(ChangeListener l) {
+        changeListenerList.remove(ChangeListener.class, l);
     }
 
-    public void fireActionEvent() {
-        ActionListener listeners[] =
-                actionListenerList.getListeners(ActionListener.class);
-        int state = UNKNOWN;//if at least one listener sets state to different value, remember this value
-        for (ActionListener l : listeners) {
-            l.actionPerformed(new ActionEvent(this, 0, "valueChanged"));
-            if(this.state != UNKNOWN) state = this.state;
+    public void fireChangeEvent() {
+        ChangeListener listeners[] =
+                changeListenerList.getListeners(ChangeListener.class);
+        //int state = UNKNOWN;//if at least one listener sets state to different value, remember this value
+        for (ChangeListener l : listeners) {
+            l.stateChanged(new ChangeEvent(this));
+            //if(this.state != UNKNOWN) state = this.state;
         }
-        this.state = state;
+        //this.state = state;
     }
 }

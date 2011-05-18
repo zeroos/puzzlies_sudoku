@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import sudoku.Cell;
 import sudoku.Data;
 import sudoku.Position;
+import sudoku.UnsolvableException;
 
 /**
  *
@@ -34,7 +35,17 @@ public class Given implements GridElement{
     public void paintComponent(Graphics g) {
         //does not paint itself
     }
+    @Override
     public int validate(){
         return VALID;
+    }
+    @Override
+    public int updatePencilmarks() throws UnsolvableException{
+        return 0;
+    }
+    
+    @Override
+    public Given clone(){
+        return new Given(pos, value);
     }
 }

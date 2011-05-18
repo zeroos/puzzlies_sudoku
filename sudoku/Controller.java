@@ -23,14 +23,18 @@ public class Controller {
 
     
     
-    
+    public Controller(){
+        this(null);
+    }
     public Controller(String file){
         pref = MyPreferences.getInstance();
         setDefaults();
         
-        if(file == null) data = new Data(3,3);
+        if(file == null) data = Generator.generate();
         else open(file);
         grid = new Grid(this);
+        grid.repaint();
+        setFieldSize(getPreferredFieldSize());
     }
     public void open(String file){
         Data d = XMLParser.parseFile(file);
@@ -67,6 +71,9 @@ public class Controller {
     }
     public ArrayList<GridElement> getElements(){
         return data.getElements();
+    }
+    public void setData(Data data){
+        this.data = data;
     }
     public Data getData(){
         return data;
