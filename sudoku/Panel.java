@@ -106,7 +106,6 @@ public class Panel extends javax.swing.JPanel {
         bottomButtons.add(addPencilmarksButton);
         
         for(int i=0; i<buttons.length; i++){
-            System.out.println("ADD" + buttons[i]);
             topPanel.add(buttons[i]);
         }
     }

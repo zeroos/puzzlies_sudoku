@@ -67,6 +67,8 @@ public class XMLParser {
                     Position pos = new Position(element.getAttributes().getNamedItem("pos").getNodeValue());
                     int value = Integer.parseInt(element.getAttributes().getNamedItem("value").getNodeValue());
                     data.addElement((GridElement)(new Given(pos, value)));
+                }else if(element.getNodeName().equals("givens")){
+                    data.addGivens(element.getFirstChild().getNodeValue());
                 }else if(element.getNodeName().equals("house")){
                     NodeList cells = element.getChildNodes();
                     ArrayList<Position> cellPositions = new ArrayList<Position>();

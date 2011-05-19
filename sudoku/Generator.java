@@ -1,5 +1,9 @@
 package sudoku;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,16 +17,42 @@ import java.util.Set;
  */
 public class Generator {
     public static Random random = new Random();
+    public static String templateDir = "/home/zeroos/programowanie/java/sudoku/test/";
+    public static String fileSufix = "_template.sud";
+    public static String type = "9x9";
+    public static final String algorithmName = "basic";
     
     public static void main(String args[]){
-        System.out.println(generate().getGridValues());
+        String templateFile = templateDir + type +fileSufix;
+        int removeCellsNum = 35;
+        if(args.length > 0) templateFile = args[0];
+        if(args.length > 1) removeCellsNum = Integer.parseInt(args[1]);
+        Data d = generate(templateFile, removeCellsNum);
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(templateFile));
+            char[] cbuf = new char[5024];
+            int count = reader.read(cbuf);
+            String template = String.valueOf(cbuf, 0, count);
+            String givensTemplate = "<givens>%s</givens>";
+            String meta = "<meta><algorithm>" + algorithmName + "</algorithm><type>" + type + "</type></meta>";
+            template = String.format(template, meta, givensTemplate);
+            System.out.format(template, d.getGridValues());
+        }catch (FileNotFoundException ex) {
+            System.out.println("ERROR");
+            System.out.println("File not found.");
+        }catch (IOException e){
+            System.out.println("ERROR");
+            System.out.println("Cannot read file.");
+        }
     }
     public static Data generate(){
-        return removeCells(generateFullBoard(), 35);
+        return generate(templateDir + type + fileSufix, -1);
     }
-    public static Data generateFullBoard(){
-        String file = "/home/zeroos/programowanie/java/sudoku/test/basic_template.sud";
-        Data data = XMLParser.parseFile(file);
+    public static Data generate(String templateFile, int removeCellsNum){
+        return removeCells(generateFullBoard(templateFile),removeCellsNum);
+    }
+    public static Data generateFullBoard(String templateFile){
+        Data data = XMLParser.parseFile(templateFile);
         data.init();
         try {
             return generateFullBoard(data, new Position(0,0));

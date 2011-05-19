@@ -6,6 +6,7 @@ import java.util.Iterator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
+import sudoku.gridElements.Given;
 import sudoku.gridElements.GridElement;
 import sudoku.gridElements.House;
 
@@ -141,6 +142,29 @@ public class Data implements Cloneable{
             }
         }
         return data;
+    }
+    public void addGivens(String data) {
+        /*Position pos = new Position(element.getAttributes().getNamedItem("pos").getNodeValue());
+        int value = Integer.parseInt(element.getAttributes().getNamedItem("value").getNodeValue());
+        data.addElement((GridElement)(new Given(pos, value)));*/
+        
+        if(data.length() != getWidth() * getHeight()){
+            System.err.println("Givens data incorrect, ignored.");
+            return;
+        }
+        int dataPos = 0;
+        for(int y=0; y<getHeight(); y++){
+            for(int x=0; x<getWidth(); x++, dataPos++){
+                try{
+                    int value = Integer.parseInt(String.valueOf(data.charAt(dataPos)), Character.MAX_RADIX);
+                     if(value != 0) addElement((GridElement)(new Given(new Position(x,y), value)));
+                }catch(NumberFormatException e){
+                    //ignore
+                }
+                
+               
+            }
+        }
     }
     public void addBlockset(String data){
         if(data.length() != getWidth() * getHeight()){

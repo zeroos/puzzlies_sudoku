@@ -36,7 +36,7 @@ public class Sudoku {
         file = "/home/zeroos/programowanie/java/sudoku/test/test.sud";
 
         JFrame frame = new JFrame(TR.t("Sudoku"));
-        final Controller c = new Controller();
+        final Controller c = new Controller(file);
         
         
         JMenuBar menuBar = new JMenuBar();
