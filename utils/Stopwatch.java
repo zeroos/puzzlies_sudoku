@@ -7,7 +7,7 @@ package utils;
  */
 import java.util.GregorianCalendar;
 
-public class Stopwatch {
+public class Stopwatch{
 
     Long start;
     Long stop;
@@ -15,6 +15,10 @@ public class Stopwatch {
     boolean wasPaused = false;
 
     public Stopwatch() {
+    }
+    
+    public StopwatchPanel getPanel(){
+        return new StopwatchPanel(this);
     }
 
     public void start() {

@@ -37,7 +37,7 @@ public class Given implements GridElement{
     }
     @Override
     public int validate(){
-        return VALID;
+        return FINISHED;
     }
     @Override
     public int updatePencilmarks() throws UnsolvableException{

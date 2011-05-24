@@ -60,12 +60,13 @@ public class Solver {
                             solution = newSolver.getData().clone();
                         }catch(UnsolvableException e){
                             if(e.getReason() == UnsolvableException.MULTIPLE_SOLUTIONS){
+                                //System.out.println("MULTIP");
                                 throw new UnsolvableException(UnsolvableException.MULTIPLE_SOLUTIONS);
                             }
                         }
                     }
-                    if(solution == null) throw new UnsolvableException(UnsolvableException.MULTIPLE_SOLUTIONS);
-                    this.data.setGridValues(solution.getGridValues());
+                    if(solution == null) throw new UnsolvableException(UnsolvableException.CONTRADICTION);
+                    data.setGridValues(solution.getGridValues());
                 }
             }
         }

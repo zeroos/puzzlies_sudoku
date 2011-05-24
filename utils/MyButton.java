@@ -48,7 +48,7 @@ public class MyButton extends JPanel {
         font = new Font(Font.SANS_SERIF, Font.PLAIN, fontSize);
         fontColor = new Color(pref.getInt("fontColor", (Color.BLACK).getRGB()));
         lineColor = new Color(pref.getInt("lineColor", new Color(0x33, 0x33, 0x33).getRGB()));
-        bgColor = new Color(pref.getInt("bgColor", (new Color(0xcc, 0xcc, 0xcc)).getRGB()));
+        bgColor = new Color(pref.getInt("bgColor", (new Color(0xff, 0xff, 0xff)).getRGB()));
 
         calcSize();
 

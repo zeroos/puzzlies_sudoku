@@ -12,8 +12,6 @@ package sudoku;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
@@ -106,8 +104,9 @@ public class Panel extends javax.swing.JPanel {
         bottomButtons.add(addPencilmarksButton);
         
         for(int i=0; i<buttons.length; i++){
-            topPanel.add(buttons[i]);
+            topRight.add(buttons[i]);
         }
+        topLeft.add(controller.getStopwatch().getPanel());
     }
 
     /** This method is called from within the constructor to
@@ -120,17 +119,28 @@ public class Panel extends javax.swing.JPanel {
     private void initComponents() {
 
         topPanel = new javax.swing.JPanel();
+        topRight = new javax.swing.JPanel();
+        topLeft = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         zoomerPanel = new javax.swing.JPanel();
         bottomButtons = new javax.swing.JPanel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.BorderLayout());
 
         topPanel.setBackground(new java.awt.Color(255, 255, 255));
         topPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         topPanel.setPreferredSize(new java.awt.Dimension(20, 25));
-        topPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 2, 2));
+        topPanel.setLayout(new java.awt.BorderLayout());
+
+        topRight.setBackground(new java.awt.Color(255, 255, 255));
+        topRight.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 2));
+        topPanel.add(topRight, java.awt.BorderLayout.LINE_END);
+
+        topLeft.setBackground(new java.awt.Color(255, 255, 255));
+        topPanel.add(topLeft, java.awt.BorderLayout.LINE_START);
+
         add(topPanel, java.awt.BorderLayout.PAGE_START);
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -140,12 +150,15 @@ public class Panel extends javax.swing.JPanel {
         jPanel2.setPreferredSize(new java.awt.Dimension(400, 20));
         jPanel2.setLayout(new java.awt.BorderLayout());
 
+        zoomerPanel.setBackground(new java.awt.Color(255, 255, 255));
         zoomerPanel.setMaximumSize(new java.awt.Dimension(120, 20));
         zoomerPanel.setMinimumSize(new java.awt.Dimension(120, 20));
         zoomerPanel.setPreferredSize(new java.awt.Dimension(120, 20));
         zoomerPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
         jPanel2.add(zoomerPanel, java.awt.BorderLayout.LINE_END);
 
+        bottomButtons.setBackground(new java.awt.Color(255, 255, 255));
+        bottomButtons.setPreferredSize(new java.awt.Dimension(150, 10));
         bottomButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
         jPanel2.add(bottomButtons, java.awt.BorderLayout.LINE_START);
 
@@ -156,7 +169,9 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JPanel bottomButtons;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel topLeft;
     private javax.swing.JPanel topPanel;
+    private javax.swing.JPanel topRight;
     private javax.swing.JPanel zoomerPanel;
     // End of variables declaration//GEN-END:variables
 }

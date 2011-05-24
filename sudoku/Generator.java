@@ -4,12 +4,16 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -24,19 +28,27 @@ public class Generator {
     
     public static void main(String args[]){
         String templateFile = templateDir + type +fileSufix;
-        int removeCellsNum = 35;
+        int removeCellsNum = -1;
         if(args.length > 0) templateFile = args[0];
         if(args.length > 1) removeCellsNum = Integer.parseInt(args[1]);
         Data d = generate(templateFile, removeCellsNum);
+        Solver s = new Solver(d.clone());
+        try {
+            s.solve();
+        } catch (UnsolvableException ex) {
+            System.out.println("WTF?");
+        }
+        Data solvedData = s.getData();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(templateFile));
             char[] cbuf = new char[5024];
             int count = reader.read(cbuf);
             String template = String.valueOf(cbuf, 0, count);
             String givensTemplate = "<givens>%s</givens>";
+            String solutionsTemplate = "<data>%s</data>";
             String meta = "<meta><algorithm>" + algorithmName + "</algorithm><type>" + type + "</type></meta>";
-            template = String.format(template, meta, givensTemplate);
-            System.out.format(template, d.getGridValues());
+            template = String.format(template, meta, givensTemplate, solutionsTemplate);
+            System.out.format(template, d.getGridValues(), solvedData.getGridValues());
         }catch (FileNotFoundException ex) {
             System.out.println("ERROR");
             System.out.println("File not found.");
@@ -52,11 +64,16 @@ public class Generator {
         return removeCells(generateFullBoard(templateFile),removeCellsNum);
     }
     public static Data generateFullBoard(String templateFile){
-        Data data = XMLParser.parseFile(templateFile);
-        data.init();
         try {
-            return generateFullBoard(data, new Position(0,0));
-        } catch (UnsolvableException ex) {
+            Data data = XMLParser.parseFile(new URL("file://" + templateFile));
+            data.init();
+            try {
+                return generateFullBoard(data, new Position(0,0));
+            } catch (UnsolvableException ex) {
+                return null;
+            }
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Generator.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
         

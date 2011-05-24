@@ -3,6 +3,7 @@ package sudoku;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,11 +28,11 @@ import utils.Utils;
  */
 public class XMLParser {
     static double API = 0.1;
-    public static Data parseFile(String file){
+    public static Data parseFile(URL url){
         Data data = null;
         try {
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = db.parse(new File(file));
+            Document doc = db.parse(url.openStream());
             Element root = doc.getDocumentElement();
             if(Double.parseDouble(root.getAttribute("api")) > API){
                 throw new Exception("Unsuported API version.");

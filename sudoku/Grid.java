@@ -65,7 +65,7 @@ public class Grid extends JPanel{
             @Override
             public void mouseClicked(MouseEvent e){
                 if(paused){
-                    unpause();
+                    controller.unpause();
                     return;
                 }
                 final int offsetX = pref.getInt("offsetX");
@@ -215,7 +215,6 @@ public class Grid extends JPanel{
         Graphics2D g2 = (Graphics2D)g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-        
         int fieldW = pref.getInt("fieldW");
         int fieldH = pref.getInt("fieldH");
         int offsetX = pref.getInt("offsetX");
@@ -272,8 +271,7 @@ public class Grid extends JPanel{
         paused = false;
         repaint();
     }
-    public void togglePause(){
-        paused = !paused;
-        repaint();
+    public boolean isPaused(){
+        return paused;
     }
 }

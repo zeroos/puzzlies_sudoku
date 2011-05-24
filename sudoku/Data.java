@@ -1,5 +1,8 @@
 package sudoku;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,6 +25,7 @@ public class Data implements Cloneable{
     protected ArrayList<GridElement> elements = new ArrayList<GridElement>();
     
     EventListenerList changeListenerList = new EventListenerList();
+    EventListenerList finishListenerList = new EventListenerList();
 
     public Data(int width, int height) {
         this.width = width;
@@ -109,6 +113,7 @@ public class Data implements Cloneable{
             int valid = e.validate();
             if(valid < result) result = valid;
         }
+        if(result==GridElement.FINISHED) fireFinishEvent();
         return result;
     }
     
@@ -142,6 +147,20 @@ public class Data implements Cloneable{
             }
         }
         return data;
+    }
+    public String getSolutionMD5(){
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            m.update(getGridValues().getBytes());
+            String result = new BigInteger(1,m.digest()).toString(16);
+            return ("00000000000000000000000000000000" + result).substring(result.length());
+        }catch(NoSuchAlgorithmException e){
+            System.err.println("MD5 algorithm not found.");
+            return "";
+        }catch(Exception e){
+            System.err.println("Error while genereting md5 sum.");
+            return "";
+        }
     }
     public void addGivens(String data) {
         /*Position pos = new Position(element.getAttributes().getNamedItem("pos").getNodeValue());
@@ -243,7 +262,21 @@ public class Data implements Cloneable{
         return newD;
     }
     
-    
+    public void addFinishListener(ChangeListener l) {
+        finishListenerList.add(ChangeListener.class, l);
+    }
+
+    public void removeFinishListener(ChangeListener l) {
+        finishListenerList.remove(ChangeListener.class, l);
+    }
+
+    public void fireFinishEvent() {
+        ChangeListener listeners[] =
+                finishListenerList.getListeners(ChangeListener.class);
+        for (ChangeListener l : listeners) {
+            l.stateChanged(new ChangeEvent(this));
+        }
+    }
     public void addChangeListener(ChangeListener l) {
         changeListenerList.add(ChangeListener.class, l);
     }
