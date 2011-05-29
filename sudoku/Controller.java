@@ -60,6 +60,7 @@ public class Controller {
         
         if(url == null) data = Generator.generate();
         else open(url);
+        
         grid = new Grid(this);
         grid.repaint();
         setFieldSize(getPreferredFieldSize());

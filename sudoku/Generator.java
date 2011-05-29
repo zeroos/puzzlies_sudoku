@@ -8,10 +8,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,15 +23,17 @@ public class Generator {
     public static Random random = new Random();
     public static String templateDir = "/home/zeroos/programowanie/java/sudoku/test/";
     public static String fileSufix = "_template.sud";
-    public static String type = "9x9";
+    public static String type = "16x16";
     public static final String algorithmName = "basic";
+    public static int removeCellsNum = 150;
     
     public static void main(String args[]){
         String templateFile = templateDir + type +fileSufix;
-        int removeCellsNum = -1;
         if(args.length > 0) templateFile = args[0];
+        
         if(args.length > 1) removeCellsNum = Integer.parseInt(args[1]);
         Data d = generate(templateFile, removeCellsNum);
+        
         Solver s = new Solver(d.clone());
         try {
             s.solve();
@@ -58,7 +60,7 @@ public class Generator {
         }
     }
     public static Data generate(){
-        return generate(templateDir + type + fileSufix, -1);
+        return generate(templateDir + type + fileSufix, removeCellsNum);
     }
     public static Data generate(String templateFile, int removeCellsNum){
         return removeCells(generateFullBoard(templateFile),removeCellsNum);
@@ -81,17 +83,20 @@ public class Generator {
         
     }
     public static Data generateFullBoard(Data data, Position start_pos) throws UnsolvableException{
+        System.out.println(start_pos);
         data.updatePencilmarks();
         for(int y=start_pos.getY(); y<data.getHeight(); y++){
             int start_x = start_pos.getY() == y?start_pos.getX():0;
             for(int x=start_x; x<data.getWidth(); x++){
                 //System.out.println("(" + x + "," + y + ") ---");
                 //System.out.println(data.getGridValues());
+                data.updatePencilmarks();
                 Cell c = data.getCell(x, y);
                 if(c==null || c.getValue() != 0) continue;
-                Set s = c.getPencilmarks().keySet();
+                Collection<Pencilmark> s = c.getPencilmarks().values();
                 s.remove(null);
-                List<Integer> values = Arrays.asList((Integer[]) s.toArray(new Integer[0]));
+                
+                List<Pencilmark> values = Arrays.asList((Pencilmark[]) s.toArray(new Pencilmark[0]));
                 Collections.shuffle(values, random);
                 //int rand = random.nextInt(values.length);
                 if(values.isEmpty()){
@@ -102,8 +107,7 @@ public class Generator {
                 for(int i=0; i<values.size(); i++){
                     try{
                         Data newD = data.clone();
-                        
-                        newD.getCell(x, y).setValue(values.get(i));
+                        newD.getCell(x, y).setValue(values.get(i).getValue());
                         if((newD = generateFullBoard(newD, new Position(x,y))) != null){
                             data = newD;
                             //System.out.println("DONE");
@@ -128,6 +132,7 @@ public class Generator {
     }
     
     public static Data removeCells(Data data, int number){
+        if(number == 0) return data;
         Data newData = data.clone();
         ArrayList<Position> positions = new ArrayList<Position>();
         for(int y=0; y<data.getHeight(); y++){
@@ -148,7 +153,7 @@ public class Generator {
                 //valid
                 newData = testData;
                 deleted ++;
-                //System.out.println("removed");
+                System.out.println("DELETED " + deleted + " CELL");
                 if(deleted == number){
                     return newData;
                 }

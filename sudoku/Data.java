@@ -224,7 +224,7 @@ public class Data implements Cloneable{
     void addAllPencilmarks() {
         for(int y=0; y<getHeight(); y++){
             for(int x=0; x<getWidth(); x++){
-                for(int i=1; i<=9; i++){
+                for(int i=1; i<=getMaxValue(); i++){
                     getCell(x,y).addPencilmark(i);
                 }
             }

@@ -1,5 +1,6 @@
 package sudoku;
 
+import java.util.Iterator;
 import java.util.Set;
 import javax.swing.JFrame;
 import utils.TR;
@@ -50,9 +51,13 @@ public class Solver {
                 if(data.getCell(x, y, false) != null && 
                    data.getCell(x, y).getValue() == 0){
                     Data solution = null;
-                    for(int v=1; v<= newD.getMaxValue(); v++){
-                        newD.getCell(x, y).setValue(v);
-                        Solver newSolver = new Solver(newD);
+                    newD.updatePencilmarks();
+                    Cell c = newD.getCell(x, y);
+                    Iterator<Pencilmark> i = c.getPencilmarks().values().iterator();
+                    while(i.hasNext()){
+                        int v=i.next().getValue();
+                        c.setValue(v);
+                        Solver newSolver = new Solver(newD.clone());
                         try{
                             newSolver.solve();
                             //solved

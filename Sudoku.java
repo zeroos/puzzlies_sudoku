@@ -39,75 +39,79 @@ public class Sudoku {
     }
     public static void createAndShowGUI(String file){
         //try {
-            file = "/home/zeroos/programowanie/java/sudoku/test/test.sud";
-
-            JFrame frame = new JFrame(TR.t("Sudoku"));
-            //final Controller c = new Controller(new URL("file://" + file));
-            final Controller c = new Controller();
-            
-            c.getData().addFinishListener(new ChangeListener(){
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    System.out.println("Finished");
-                }
+            //try {
+                file = "/home/zeroos/programowanie/python/django/puzzlies_git/puzzlies/puzzlies/sudoku/generated_sudokus/6.sud";
+                        
+                JFrame frame = new JFrame(TR.t("Sudoku"));
+                //final Controller c = new Controller(new URL("file://" + file));
+                final Controller c = new Controller();
                 
-            });
-            
-            JMenuBar menuBar = new JMenuBar();
-            JMenuItem menuItem;
-            menuItem = new JMenuItem(new AbstractAction(TR.t("Solve")){
-                @Override
-                public void actionPerformed(ActionEvent e){
-                    try {
+                c.getData().addFinishListener(new ChangeListener(){
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        System.out.println("Finished");
+                    }
+                    
+                });
+                
+                JMenuBar menuBar = new JMenuBar();
+                JMenuItem menuItem;
+                menuItem = new JMenuItem(new AbstractAction(TR.t("Solve")){
+                    @Override
+                    public void actionPerformed(ActionEvent e){
+                        try {
+                            Solver s = new Solver(c.getData());
+                            s.solve();
+                        } catch (UnsolvableException ex) {
+                            System.out.println("UNSOLVABLE:");
+                            if(ex.getReason() == UnsolvableException.CONTRADICTION){
+                                System.out.println("CONTRADICTION");
+                            }else if(ex.getReason() == UnsolvableException.MULTIPLE_SOLUTIONS){
+                                System.out.println("MULTIPLE SOLUTIONS");
+                            }else{
+                                System.out.println("UNKNOWN");
+                            }
+                        }
+                    }
+                });
+                menuBar.add(menuItem);
+                menuItem = new JMenuItem(new AbstractAction(TR.t("One step")){
+                    @Override
+                    public void actionPerformed(ActionEvent e){
                         Solver s = new Solver(c.getData());
-                        s.solve();
-                    } catch (UnsolvableException ex) {
-                        System.out.println("UNSOLVABLE:");
-                        if(ex.getReason() == UnsolvableException.CONTRADICTION){
-                            System.out.println("CONTRADICTION");
-                        }else if(ex.getReason() == UnsolvableException.MULTIPLE_SOLUTIONS){
-                            System.out.println("MULTIPLE SOLUTIONS");
-                        }else{
-                            System.out.println("UNKNOWN");
+                        try {
+                            s.oneStep();
+                        } catch (UnsolvableException ex) {
+                            System.out.println("Unsolvable");
                         }
                     }
-                }
-            });
-            menuBar.add(menuItem);
-            menuItem = new JMenuItem(new AbstractAction(TR.t("One step")){
-                @Override
-                public void actionPerformed(ActionEvent e){
-                    Solver s = new Solver(c.getData());
-                    try {
-                        s.oneStep();
-                    } catch (UnsolvableException ex) {
-                        System.out.println("Unsolvable");
-                    }
-                }
-            });
-            menuBar.add(menuItem);
-            menuItem = new JMenuItem(new AbstractAction(TR.t("Show hints")){
-                @Override
-                public void actionPerformed(ActionEvent e){
-                    try {
-                        c.getData().updatePencilmarks();
-                    } catch (UnsolvableException ex) {
-                        System.out.println("Unsolvable");
-                    }
+                });
+                menuBar.add(menuItem);
+                menuItem = new JMenuItem(new AbstractAction(TR.t("Show hints")){
+                    @Override
+                    public void actionPerformed(ActionEvent e){
+                        try {
+                            c.getData().updatePencilmarks();
+                        } catch (UnsolvableException ex) {
+                            System.out.println("Unsolvable");
                         }
-            });
-            menuBar.add(menuItem);
-            
-            
-            frame.setJMenuBar(menuBar);
-            Panel panel = new Panel(c, new MyButton[]{new MyButton("test")});
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(panel);
-            frame.setSize(450, 500);
-            frame.setVisible(true);
-        /*} catch (MalformedURLException ex) {
-            Logger.getLogger(Sudoku.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+                            }
+                });
+                menuBar.add(menuItem);
+                
+                
+                frame.setJMenuBar(menuBar);
+                Panel panel = new Panel(c, new MyButton[]{new MyButton("test")});
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setContentPane(panel);
+                frame.setSize(450, 500);
+                frame.setVisible(true);
+            /*} catch (MalformedURLException ex) {
+                Logger.getLogger(Sudoku.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
+        //} catch (MalformedURLException ex) {
+        //    Logger.getLogger(Sudoku.class.getName()).log(Level.SEVERE, null, ex);
+        //}
     }
 }
 
