@@ -23,13 +23,19 @@ public class Generator {
     public static Random random = new Random();
     public static String templateDir = "/home/zeroos/programowanie/java/sudoku/test/";
     public static String fileSufix = "_template.sud";
-    public static String type = "16x16";
+    public static String type = "irregular/24";
     public static final String algorithmName = "basic";
-    public static int removeCellsNum = 150;
+    public static int removeCellsNum = 10;
     
     public static void main(String args[]){
+        if(args.length > 0) type = args[0];
+       
         String templateFile = templateDir + type +fileSufix;
-        if(args.length > 0) templateFile = args[0];
+        
+        //dirty as hell:
+        if(type.equals("irregular")){
+            templateFile = templateDir + "irregular/" + random.nextInt(60) + fileSufix;
+        }
         
         if(args.length > 1) removeCellsNum = Integer.parseInt(args[1]);
         Data d = generate(templateFile, removeCellsNum);
@@ -83,7 +89,6 @@ public class Generator {
         
     }
     public static Data generateFullBoard(Data data, Position start_pos) throws UnsolvableException{
-        System.out.println(start_pos);
         data.updatePencilmarks();
         for(int y=start_pos.getY(); y<data.getHeight(); y++){
             int start_x = start_pos.getY() == y?start_pos.getX():0;
@@ -153,7 +158,6 @@ public class Generator {
                 //valid
                 newData = testData;
                 deleted ++;
-                System.out.println("DELETED " + deleted + " CELL");
                 if(deleted == number){
                     return newData;
                 }

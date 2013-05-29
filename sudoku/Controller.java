@@ -106,11 +106,14 @@ public class Controller {
         return data;
     }
     public int getPreferredFieldSize(){
+        int ret;
         if(data.getMaxValue() < 10){
-            return (int) Math.ceil(Math.sqrt(data.getMaxValue())) * pref.getInt("minPencilmarkSize");
+            ret = (int) Math.ceil(Math.sqrt(data.getMaxValue())) * pref.getInt("minPencilmarkSize");
+        }else{
+            ret = (int) Math.ceil(Math.sqrt(data.getMaxValue())) * pref.getInt("minPencilmarkSize") * 2;
         }
-        //two digits
-        return (int) Math.ceil(Math.sqrt(data.getMaxValue())) * pref.getInt("minPencilmarkSize") * 2;
+        if(ret > 50) ret = 50;
+        return ret;
     }
     public void setFieldSize(int newSize){
         pref.setInt("fieldW", newSize);

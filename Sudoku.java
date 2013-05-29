@@ -40,11 +40,21 @@ public class Sudoku {
     public static void createAndShowGUI(String file){
         //try {
             //try {
-                file = "/home/zeroos/programowanie/python/django/puzzlies_git/puzzlies/puzzlies/sudoku/generated_sudokus/6.sud";
                         
                 JFrame frame = new JFrame(TR.t("Sudoku"));
                 //final Controller c = new Controller(new URL("file://" + file));
-                final Controller c = new Controller();
+                
+                final Controller c;
+                if(file == null) {
+                    c = new Controller();
+                }else {
+                    try {
+                        c = new Controller(new URL(file));
+                    } catch (MalformedURLException ex) {
+                        Logger.getLogger(Sudoku.class.getName()).log(Level.SEVERE, null, ex);
+                        return;
+                    }
+                }
                 
                 c.getData().addFinishListener(new ChangeListener(){
                     @Override

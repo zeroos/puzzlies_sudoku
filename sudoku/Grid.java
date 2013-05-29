@@ -86,6 +86,8 @@ public class Grid extends JPanel{
                 final Cell c = controller.getData().getCell(fieldX, fieldY);
                 final int value = c.getClickedPencilmarkValue(x - fieldX*fieldW, y-fieldY*fieldH);
                 
+                if(value > c.getMaxValue()) return;
+                
                 if(e.getButton() == MouseEvent.BUTTON1){
                     final int currentValue = c.getValue();
                     final Color currentColor = c.getColoring()==null?null:new Color(c.getColoring().getRGB());

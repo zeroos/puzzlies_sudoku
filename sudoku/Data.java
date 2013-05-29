@@ -143,7 +143,7 @@ public class Data implements Cloneable{
         String data = "";
         for(int y=0; y<getHeight(); y++){
             for(int x=0; x<getWidth(); x++){
-                data += String.valueOf(getCell(x,y).getValue());
+                data += Integer.toString(getCell(x,y).getValue(), Character.MAX_RADIX);
             }
         }
         return data;
